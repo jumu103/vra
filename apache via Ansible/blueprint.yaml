@@ -1,5 +1,5 @@
 name: apache via Ansible
-version: 1.0
+version: 1.5
 #
 formatVersion: 1
 inputs: {}
@@ -50,5 +50,5 @@ resources:
         provision:
           - /var/lib/awx/projects/jm-demo/install-apache.yml
       hostVariables:
-        message: 'Hello ${env.requestedBy}'
+        message: 'Hello ${env.requestedBy} bp version 1.5'
         project: '${env.projectName}'
