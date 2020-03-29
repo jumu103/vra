@@ -1,0 +1,96 @@
+formatVersion: 1
+# -------------------------------------------------------------------------------
+inputs:
+  which_linux:
+    type: string
+    oneOf:
+      - title: CentOS 7.3
+        const: cos73
+      - title: Ubuntu vers 18.04
+        const: ubuntu-18.04
+    default: ubuntu-18.04
+    description: Any description can go here
+  #    
+  which_hostname:
+    type: string
+    minLength: 2
+    maxLength: 20
+    pattern: '^[a-z0-9A-Z_-]{2,20}$'
+    title: enter host name
+    description: Enter a hostname between 2...20 characters
+  #   
+  # which_ip:
+  #type: string
+  #pattern: '^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$'
+  #title: enter desired ip address
+  #description: any description goes here
+  which_network:
+    type: string
+    oneOf:
+      - title: Network 123
+        const: 'NETWORK-TYPE:default-net'
+      - title: Routed Network abc
+        const: 'NETWORK-TYPE:routed'
+      - title: High Security Network
+        const: 'NETWORK-TYPE:nat'
+    default: 'NETWORK-TYPE:default-net'
+    description: Any description can go here
+  #    
+  which_cloud:
+    type: string
+    oneOf:
+      - title: AWS EU West-1 Ireland
+        const: 'cloud-resource:aws-eu-west-1'
+      - title: Azure France
+        const: 'cloud-resource:azure-france'
+      - title: 'local vSphere pvc, Cluster-1'
+        const: 'cloud-resource:vsphere-pvc-cluster-1'
+    default: 'cloud-resource:vsphere-pvc-cluster-1'
+    description: 'local vSphere pvc.virt.jm, AWS-Eu-west-1 and Azure France are setup'
+#----------------------------------------------------------------------------
+resources:
+  Cloud_Net:
+    type: Cloud.NSX.Network
+    metadata:
+      layoutPosition:
+        - 0
+        - 0
+    properties:
+      constraints:
+        - tag: '${input.which_network}'
+      name: network01
+  #      
+  linux-vm:
+    type: Cloud.Machine
+    metadata:
+      layoutPosition:
+        - 1
+        - 0
+    properties:
+      image: '${input.which_linux}'
+      flavor: small
+      constraints:
+        - tag: '${input.which_cloud}'
+      networks:
+        - network: '${resource.Cloud_Net.id}'
+          assignment: static
+      #storage:
+      remoteAccess:
+        authentication: usernamePassword
+        username: ubuntu
+        password: VMware1!
+      # ---------------- cloud-init--------------------  
+      cloudConfig: |
+        hostname: ${input.which_hostname}
+        preserve_hostname: false
+        #hostname: ${self.resourceName}
+        ssh_pwauth: true
+        password: VMware1!
+        chpasswd:
+          expire: false
+        ssh_authorized_keys:
+          - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCm9bPB+ozKssZaE00Jo1IJ1ajygoJWVRSCe45/KuNWNg0pCfvsBhbl5TAO+QH2MohcMCEUIZEqNCqn+8u+OBt42+CyfmtGSjMonnn2wad7+aI3QNPObqBw6I/VEnQQXkSNu2EggkXOlceBzqU9Ux3LJIvKTj/64LBEqQbXvdkzfyIzidK88B98PyXVUAmijN4izj8CCphaGFeZg0DI3h2DsNYj2jA+U/eadp7qtgtFR/o8w3zCvxSrc7dX5a2h/hViMDN46WoXRNdD7J3AcWoOM2OZW8F/7PvoXZgBmjIMyXFbEN5h8EP9CxZw+GS7sZZzxlO4D2IkubrXQbM1udOZkQgDdrtKeyitqPaj9m4zYqayjJjAQn6FO5zBZ7HXPvQcDZI7B7Re4hpiyqJ1r52XiPCvWxD3RYGFuFSDIydCTUi4gpYUzkBLdqU5Ru/0p59j5LXgOVqL6NRBiNm64K+0+gVM8dzxBA3zP2vLftSZmYom+w/bvzX312uw7IPDaEBn6l7Wlph4FzQ/xnJFJV/sJLVS+GP1DuxWLojO6h/TlYAQ75Njclc3Ti8T/wjqVUKigsD3ZZL4mw6dnoxY8uhj3q/DzHkXvAeyA2lH4b1hfs/y7EYCvKhutxXMMIHKVgryWKUtmrR+fAEiNDIJKUha3NQTkCxCodW0kH8jDEOMqw== root@jm-prec5510
+        runcmd:
+          - mkdir /jm2
+          - echo ${self.name} >>/jm2/details.txt
+          
