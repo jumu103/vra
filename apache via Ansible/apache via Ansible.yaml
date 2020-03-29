@@ -1,0 +1,51 @@
+formatVersion: 1
+inputs: {}
+resources:
+  Network_1:
+    type: Cloud.vSphere.Network
+    metadata:
+      layoutPosition:
+        - 0
+        - 0
+    properties:
+      networkType: existing
+      constraints:
+        - tag: 'NETWORK-TYPE:default-net'
+  vsp_VM:
+    type: Cloud.vSphere.Machine
+    metadata:
+      layoutPosition:
+        - 1
+        - 1
+    properties:
+      imageRef: cos77.tpl/snap01
+      cpuCount: 2
+      totalMemoryMB: 2048
+      cloudConfig: |
+        ssh_pwauth: true
+        users:
+          - name: root
+            ssh-authorized-keys:
+              - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDVW95DtsM8wwi5jnsrs0LafiowuXylfJauWQsrYYH24hVH8kUPkEGSyuU5QAZQIpXAyktzh8aAancinACNmJckEF/SUxrAQ+Hdh0Rbcm0f9oLqcnFB8giTva7Faf9MkSlEChAsJWfoa2H+LA3hP+ebKC2E3ZUt8kn2l3406GmmmDH6vUMG/Mifzn7B4nKRPGFnMZGHgy19BoppJVia3VaRVjAF/xcAZ7S1eCI7EdhQPMXuS9L+0fp+DVCEJ1VoY0x3E+4y6o8QZK7G1kxAZDWsDPYWWAxbaymQvu0+YKmImBKi8UB3NApDsAEUPAM2YrbDuh66rCkHXjzuuRkyKBx
+      networks:
+        - network: '${resource.Network_1.id}'
+  Cloud_Ansible_1:
+    type: Cloud.Ansible
+    metadata:
+      layoutPosition:
+        - 2
+        - 0
+    properties:
+      host: '${resource.vsp_VM.*}'
+      remoteAccess: root
+      osType: linux
+      account: ansible.virt.jm
+      username: root
+      privateKeyFile: /root/.ssh/id_rsa
+      inventoryFile: /var/lib/awx/projects/jm-demo/hosts
+      playbooks:
+        provision:
+          - /var/lib/awx/projects/jm-demo/install-apache.yml
+      hostVariables:
+        message: 'Hello ${env.requestedBy}'
+        project: '${env.projectName}'
