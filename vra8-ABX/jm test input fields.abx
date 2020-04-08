@@ -1,0 +1,17 @@
+---
+exportVersion: "1"
+exportId: "8a7480387143d16101715a2e900e0032"
+name: "jm test input fields"
+runtime: "python"
+entrypoint: "handler"
+inputs:
+  new_name: "is_new"
+  old_name: "is_old"
+timeoutSeconds: 180
+deploymentTimeoutSeconds: 600
+actionType: "SCRIPT"
+configuration:
+  const-providers:
+  - ""
+  const_azure-system_managed_identity: false
+memoryInMB: 150
