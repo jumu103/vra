@@ -1,0 +1,15 @@
+---
+exportVersion: "1"
+exportId: "8a7480387143d16101715a63f2ea004f"
+name: "jm Rename VM"
+runtime: "python"
+entrypoint: "handler"
+description: "uses inputs[\"customProperties\"][\"jm-newName\"] to set the newName"
+timeoutSeconds: 180
+deploymentTimeoutSeconds: 600
+actionType: "SCRIPT"
+configuration:
+  const-providers:
+  - ""
+  const_azure-system_managed_identity: false
+memoryInMB: 150
