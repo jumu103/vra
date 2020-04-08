@@ -1,0 +1,16 @@
+---
+exportVersion: "1"
+exportId: "8a7480387143d16101715943fc23000e"
+name: "jm Assigne Tag to VM"
+runtime: "python"
+entrypoint: "handler"
+inputs:
+  jm-target: "jm-World"
+timeoutSeconds: 180
+deploymentTimeoutSeconds: 600
+actionType: "SCRIPT"
+configuration:
+  const-providers:
+  - ""
+  const_azure-system_managed_identity: false
+memoryInMB: 150
