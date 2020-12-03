@@ -1,1 +1,61 @@
-
+name: ubuntu-multi-cloud
+version: 1
+formatVersion: 1
+inputs:
+  which_cloud:
+    type: string
+    description: Choice of Cloud Resources
+    title: Select Cloud Resource
+    oneOf:
+      - title: 'Cloud Resource Azure Netherlands, Amsterdam'
+        const: 'CLOUD:azure.amsterdam'
+      - title: 'Cloud Resource AWS Ireland, Dublin'
+        const: 'CLOUD:aws.dublin'
+      - title: Cloud Resource Private Cloud in Home Lab
+        const: 'CLOUD:pvc'
+    default: 'CLOUD:pvc'
+#        
+resources:
+  Net_1:
+    type: Cloud.Network
+    metadata:
+      layoutPosition:
+        - 0
+        - 0
+    properties:
+      networkType: existing
+      constraints:
+        - tag: 'NET:default-net'
+  # 
+  VM_1:
+    type: Cloud.Machine
+    metadata:
+      layoutPosition:
+        - 1
+        - 0
+    properties:
+      image: ubuntu-18.04
+      flavor: jm-small-cloud
+      networks:
+        - network: '${resource.Net_1.id}'
+      constraints:
+        - tag: '${input.which_cloud}'
+      remoteAccess:
+        authentication: usernamePassword
+        username: ubuntu
+        password: VMware1!
+      # ---------------- cloud-init--------------------  
+      cloudConfig:
+        # hostname: ${input.which_hostname}
+        preserve_hostname: false
+        hostname: '${self.resourceName}'
+        ssh_pwauth: true
+        password: VMware1!
+        chpasswd:
+          expire: false
+        #ssh_authorized_keys:
+        #  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCm9bPB+ozKssZaE00Jo1IJ1ajygoJWVRSCe45/KuNWNg0pCfvsBhbl5TAO+QH2MohcMCEUIZEqNCqn+8u+OBt42+CyfmtGSjMonnn2wad7+aI3QNPObqBw6I/VEnQQXkSNu2EggkXOlceBzqU9Ux3LJIvKTj/64LBEqQbXvdkzfyIzidK88B98PyXVUAmijN4izj8CCphaGFeZg0DI3h2DsNYj2jA+U/eadp7qtgtFR/o8w3zCvxSrc7dX5a2h/hViMDN46WoXRNdD7J3AcWoOM2OZW8F/7PvoXZgBmjIMyXFbEN5h8EP9CxZw+GS7sZZzxlO4D2IkubrXQbM1udOZkQgDdrtKeyitqPaj9m4zYqayjJjAQn6FO5zBZ7HXPvQcDZI7B7Re4hpiyqJ1r52XiPCvWxD3RYGFuFSDIydCTUi4gpYUzkBLdqU5Ru/0p59j5LXgOVqL6NRBiNm64K+0+gVM8dzxBA3zP2vLftSZmYom+w/bvzX312uw7IPDaEBn6l7Wlph4FzQ/xnJFJV/sJLVS+GP1DuxWLojO6h/TlYAQ75Njclc3Ti8T/wjqVUKigsD3ZZL4mw6dnoxY8uhj3q/DzHkXvAeyA2lH4b1hfs/y7EYCvKhutxXMMIHKVgryWKUtmrR+fAEiNDIJKUha3NQTkCxCodW0kH8jDEOMqw== root@jm-prec5510
+        runcmd:
+          - mkdir /jm2
+          - 'echo ${self.name} >>/jm2/details.txt'
+          
