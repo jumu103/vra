@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:workflow xmlns:ns2="http://vmware.com/vco/workflow" root-name="item1" object-name="workflow:name=generic" id="23285b84-592f-4bfc-ab53-c4e338749e67" editor-version="2.0" version="1.0.0" api-version="6.0.0" restartMode="1" resumeFromFailedMode="0">
+    <display-name>jm-wf01</display-name>
+    <position y="50.0" x="100.0"/>
+    <input>
+        <param name="vm01" type="VC:VirtualMachine">
+            <description>jm definition VM-01</description>
+        </param>
+        <param name="memory01" type="number"/>
+    </input>
+    <output/>
+    <workflow-item name="item0" type="end" end-mode="0" comparator="0">
+        <in-binding/>
+        <out-binding/>
+        <position y="50.0" x="510.0"/>
+    </workflow-item>
+    <workflow-item name="item1" out-name="item2" type="link" linked-workflow-id="BD80808080808080808080808080808075C280800122528313869552e41805bb1" comparator="0">
+        <display-name>Stop the VM</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="vm01">
+                <description>Virtual machine to shut down</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="60.0" x="160.0"/>
+    </workflow-item>
+    <workflow-item name="item2" out-name="item3" type="link" linked-workflow-id="BD808080808080808080808080808080A8C380800122528313869552e41805bb1" comparator="0">
+        <display-name>Change RAM</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="vm01">
+                <description>Virtual machine on which to change the amount of RAM</description>
+            </bind>
+            <bind name="memory" type="number" export-name="memory01">
+                <description>Memory size in MB</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="60.0" x="270.0"/>
+    </workflow-item>
+    <workflow-item name="item3" out-name="item0" type="link" linked-workflow-id="BD808080808080808080808080808080CCC280800122528313869552e41805bb1" comparator="0">
+        <display-name>Start the VM</display-name>
+        <script encoded="false"></script>
+        <in-binding>
+            <bind name="vm" type="VC:VirtualMachine" export-name="vm01">
+                <description>Virtual machine to start</description>
+            </bind>
+            <bind name="host" type="VC:HostSystem" export-name="">
+                <description>[Optional] The host on which to power on the virtual machine. The host must be part of the same compute resource with which the virtual machine is currently associated. Uses the currently associated host if you do not specify a new host or if you specify an incompatible host.</description>
+            </bind>
+        </in-binding>
+        <out-binding/>
+        <description> </description>
+        <position y="60.0" x="375.0"/>
+    </workflow-item>
+</ns2:workflow>
